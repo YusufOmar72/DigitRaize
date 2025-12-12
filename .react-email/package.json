@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "email dev --port 3001"
+  }
+}
+

@@ -1,0 +1,15 @@
+# robots.txt for DigitRaize
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /api/
+Disallow: /preview-emails/
+Disallow: /blob-picker/
+
+# Sitemap location
+Sitemap: https://digitraize.com/sitemap.xml
+
+# Crawl-delay (optional, adjust as needed)
+Crawl-delay: 1
+

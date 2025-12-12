@@ -1,0 +1,21 @@
+{
+  "name": "DigitRaize - Crafting Digital Excellence",
+  "short_name": "DigitRaize",
+  "description": "Transform your vision into exceptional web experiences. Expert web development, UI/UX design, e-commerce solutions, and SEO optimization.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#18181b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["business", "productivity", "technology"],
+  "lang": "en-US",
+  "dir": "ltr"
+}
+
