@@ -4,16 +4,36 @@ import { UserConfirmationEmail } from '@/app/components/emails/user-confirmation
 import { AdminNotificationEmail } from '@/app/components/emails/admin-notification';
 import { supabase } from '@/lib/supabase/server';
 
-// Initialize Resend with your API key
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialization of Resend client to prevent build-time errors
+let resendClient: Resend | null = null;
+
+function getResendClient(): Resend {
+  if (!resendClient) {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      throw new Error('Missing RESEND_API_KEY environment variable');
+    }
+    resendClient = new Resend(apiKey);
+  }
+  return resendClient;
+}
 
 // Admin email addresses - must be set via environment variable in production
-const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim()) || 
-  (process.env.NODE_ENV === 'development' ? [
-    'yusufomar840@gmail.com',
-    'digitraize@gmail.com',
-    'info@digitraize.com',
-  ] : []);
+function getAdminEmails(): string[] {
+  const adminEmails = process.env.ADMIN_EMAILS;
+  if (adminEmails) {
+    return adminEmails.split(',').map(email => email.trim());
+  }
+  // Only use default emails in development
+  if (process.env.NODE_ENV === 'development') {
+    return [
+      'yusufomar840@gmail.com',
+      'digitraize@gmail.com',
+      'info@digitraize.com',
+    ];
+  }
+  return [];
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -61,6 +81,10 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Get Resend client and admin emails (lazy initialization)
+    const resend = getResendClient();
+    const ADMIN_EMAILS = getAdminEmails();
 
     // Send confirmation email to user
     const userEmailResponse = await resend.emails.send({
