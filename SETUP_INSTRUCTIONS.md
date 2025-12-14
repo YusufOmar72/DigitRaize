@@ -93,3 +93,4 @@ You can view all contact form submissions in your Supabase dashboard:
 - Verify API route is accessible
 - Check network tab for failed requests
 
+

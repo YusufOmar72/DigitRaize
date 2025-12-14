@@ -1,8 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { UserConfirmationEmail } from '@/app/components/emails/user-confirmation';
-import { AdminNotificationEmail } from '@/app/components/emails/admin-notification';
 import { supabase } from '@/lib/supabase/server';
+
+// Lazy import email components to avoid build-time issues
+let UserConfirmationEmail: any;
+let AdminNotificationEmail: any;
+
+async function loadEmailComponents() {
+  if (!UserConfirmationEmail || !AdminNotificationEmail) {
+    const userEmailModule = await import('@/app/components/emails/user-confirmation');
+    const adminEmailModule = await import('@/app/components/emails/admin-notification');
+    UserConfirmationEmail = userEmailModule.UserConfirmationEmail;
+    AdminNotificationEmail = adminEmailModule.AdminNotificationEmail;
+  }
+  return { UserConfirmationEmail, AdminNotificationEmail };
+}
 
 // Lazy initialization of Resend client to prevent build-time errors
 let resendClient: Resend | null = null;
@@ -33,6 +45,13 @@ function getAdminEmails(): string[] {
     ];
   }
   return [];
+}
+
+export async function GET() {
+  return NextResponse.json(
+    { message: 'Contact API endpoint. Use POST to submit a contact form.' },
+    { status: 200 }
+  );
 }
 
 export async function POST(request: NextRequest) {
@@ -86,12 +105,15 @@ export async function POST(request: NextRequest) {
     const resend = getResendClient();
     const ADMIN_EMAILS = getAdminEmails();
 
+    // Load email components
+    const { UserConfirmationEmail: UserEmail, AdminNotificationEmail: AdminEmail } = await loadEmailComponents();
+
     // Send confirmation email to user
     const userEmailResponse = await resend.emails.send({
       from: 'Digitraize <info@digitraize.com>', // Must be your verified domain
       to: [email],
       subject: `We received your message - ${subject}`,
-      react: UserConfirmationEmail({ name, email, subject, message }),
+      react: UserEmail({ name, email, subject, message }),
     });
 
     // Send notification emails to all admin addresses
@@ -100,7 +122,7 @@ export async function POST(request: NextRequest) {
         from: 'Digitraize Contact Form <info@digitraize.com>', // Must be your verified domain
         to: [adminEmail],
         subject: `New Contact Form Submission from ${name}`,
-        react: AdminNotificationEmail({ name, email, subject, message, submittedAt }),
+        react: AdminEmail({ name, email, subject, message, submittedAt }),
       })
     );
 
@@ -133,8 +155,14 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Contact form error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    console.error('Error details:', { errorMessage, errorStack });
     return NextResponse.json(
-      { error: 'An unexpected error occurred. Please try again.' },
+      { 
+        error: 'An unexpected error occurred. Please try again.',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }

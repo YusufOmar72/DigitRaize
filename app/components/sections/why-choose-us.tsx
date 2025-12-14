@@ -2,32 +2,32 @@
 
 import { motion } from "framer-motion";
 import { useInView } from "@/app/hooks/use-in-view";
-import { Award, Users, Clock, TrendingUp } from "lucide-react";
+import { Award, Users, Clock, Tag } from "lucide-react";
 
 const reasons = [
+  {
+    icon: Tag,
+    title: "Affordable Pricing",
+    description:
+      "Great websites shouldn't break the bank. We offer transparent, startup-friendly pricing with no hidden fees, delivering exceptional value.",
+  },
   {
     icon: Award,
     title: "Premium Quality",
     description:
-      "We deliver exceptional craftsmanship with attention to every detail, ensuring your project exceeds expectations.",
-  },
-  {
-    icon: Users,
-    title: "Expert Team",
-    description:
-      "Our seasoned professionals bring years of experience and cutting-edge expertise to every project.",
+      "Affordable doesn't mean compromise. We deliver exceptional craftsmanship with attention to every detail, ensuring your digital presence looks professional.",
   },
   {
     icon: Clock,
     title: "On-Time Delivery",
     description:
-      "We respect your timeline and consistently deliver projects on schedule without compromising quality.",
+      "Your deadline matters. We respect your timeline and consistently deliver projects on schedule without cutting corners or sacrificing quality.",
   },
   {
-    icon: TrendingUp,
-    title: "Results-Driven",
+    icon: Users,
+    title: "Expert Team",
     description:
-      "We focus on measurable outcomes that drive growth, engagement, and long-term success for your business.",
+      "Our seasoned professionals bring years of experience and cutting-edge expertise to every project. We understand startups and their unique challenges.",
   },
 ];
 
@@ -67,7 +67,7 @@ export function WhyChooseUs() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group relative"
             >
-              <div className="text-center p-6 sm:p-8 rounded-2xl hover:bg-white/50 dark:hover:bg-zinc-800/50 transition-all duration-300">
+              <div className="text-center p-6 sm:p-8 rounded-2xl hover:bg-white/50 dark:hover:bg-zinc-800/50 transition-all duration-300 h-full flex flex-col">
                 {/* Icon */}
                 <motion.div
                   whileHover={{ scale: 1.15, rotate: 5 }}
@@ -83,7 +83,7 @@ export function WhyChooseUs() {
                 </h3>
 
                 {/* Description */}
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed flex-grow mx-auto max-w-[280px]">
                   {reason.description}
                 </p>
               </div>

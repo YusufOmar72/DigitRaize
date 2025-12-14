@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeWrapper } from "./components/theme-wrapper";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -107,6 +108,7 @@ export default function RootLayout({
         <ThemeWrapper>
           {children}
         </ThemeWrapper>
+        <Analytics />
       </body>
     </html>
   );
